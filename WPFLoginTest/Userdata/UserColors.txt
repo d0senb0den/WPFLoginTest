@@ -1,5 +1,5 @@
 ﻿Hampus #8F5190
-Pontus #8F5190
-Tim #8F5190
-Hampuz #8F5190
-Hampuzs #8F5190
+Pontus #4170C8
+Tim #00CC77
+Mattias #E9820C
+Joakim #DE2626

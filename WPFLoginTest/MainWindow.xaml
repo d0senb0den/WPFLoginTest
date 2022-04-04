@@ -10,6 +10,7 @@
     <Grid>
         <StackPanel x:Name="Profiles" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
         </StackPanel>
-        <Button Click="ManageUsersButton_MouseLeftButtonDown" x:Name="ManageUsersButton" Content="Edit" Width="50" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10"/>
+        <Button Click="ManageUserButtonClicked" x:Name="ManageUsersButton" Content="Edit" Width="50" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10"/>
+        <Button Visibility="Hidden" Click="BackButtonClicked" x:Name="BackButton" Content="Back" Width="50" Height="25" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

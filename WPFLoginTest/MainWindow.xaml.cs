@@ -20,72 +20,44 @@ namespace WPFLoginTest
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    
+
     public enum ProfileMode
     {
         SelectUser,
         RemoveUser,
-        AddUser
+        AddUser,
+        EditUserName
     }
     public partial class MainWindow : Window
     {
         private Random rnd = new();
         ProfileMode mode = ProfileMode.SelectUser;
+        Border plusBorder = new();
+        List<UserCircle> userCircles = new List<UserCircle>();
 
-        void UpdateUserColors(out UserCircle[] userCircles)
+        void LoadUserCircles()
         {
             using (var fs = File.Open($"{AppContext.BaseDirectory}Userdata\\UserColors.txt", FileMode.OpenOrCreate))
             {
                 StreamReader sr = new(fs);
                 var text = sr.ReadToEnd();
-                List<UserCircle> list = new();
                 foreach (var t in text.Split("\n"))
                 {
                     var arr = t.Split(new char[] { ' ' }, StringSplitOptions.None);
-                    list.Add(new UserCircle(arr[0], (Color)ColorConverter.ConvertFromString(arr[1])));
+                    userCircles.Add(new UserCircle(arr[0], (Color)ColorConverter.ConvertFromString(arr[1])));
                 }
-                userCircles = list.ToArray();
             };
         }
 
         public MainWindow()
         {
             InitializeComponent();
-            //var usernames = GetUsernames();
-            UpdateUserColors(out UserCircle[] userCircles);
-            LoadUsers(userCircles);
+            LoadUserCircles();
+            DrawUserCircles();
+            InitializePlusBorder();
         }
-
-        public void LoadUsers(UserCircle[] users)
+        public void InitializePlusBorder()
         {
-            foreach (var user in users)
-            {
-                Label label = new();
-                label.Content = user.Name;
-                Border border = new();
-                border.Height = 100;
-                border.Width = 100;
-                border.Margin = new Thickness(10);
-                border.CornerRadius = new CornerRadius(50);
-                border.Background = new SolidColorBrush(user.Background);
-                VisualBrush brush = new();
-                brush.Visual = border;
-                border.Child = label;
-                label.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                label.VerticalAlignment = VerticalAlignment.Center;
-                label.HorizontalAlignment = HorizontalAlignment.Center;
-
-                Profiles.Children.Add(border);
-
-                border.MouseEnter += (sender, e) => Border_MouseEnter(border);
-                border.MouseLeave += (sender, e) => Border_MouseLeave(border);
-                border.MouseLeftButtonDown += Border_MouseLeftButtonDown;
-            }
-            /*Image img = new();
-            img.Source = new BitmapImage("Images/PlusSign.png");
-            AddProfile.Children.Add(button);*/
-
-            Border plusBorder = new();
             plusBorder.Width = 30;
             plusBorder.Height = 30;
             plusBorder.Background = Brushes.Transparent;
@@ -114,7 +86,7 @@ namespace WPFLoginTest
             myPathFigure.Segments.Add(
                 new LineSegment()
                 {
-                    Point = new Point(0,-100)
+                    Point = new Point(0, -100)
                 });
             PathGeometry myPathGeometry2 = new();
             PathFigure myPathFigure2 = new();
@@ -133,7 +105,19 @@ namespace WPFLoginTest
 
             plusBorder.MouseEnter += (sender, e) => Border_MouseEnter(plusBorder);
             plusBorder.MouseLeave += (sender, e) => Border_MouseLeave(plusBorder, Brushes.White, new Thickness(2));
-            //plusBorder.MouseLeftButtonDown += (sender, e) => Border2_MouseLeftButtonDown(plusBorder);
+        }
+        public void DrawUserCircles()
+        {
+            foreach (var user in userCircles)
+            {
+                var border = user.Border;
+
+                Profiles.Children.Add(border);
+
+                border.MouseEnter += (sender, e) => Border_MouseEnter(border);
+                border.MouseLeave += (sender, e) => Border_MouseLeave(border);
+                border.MouseLeftButtonDown += Border_MouseLeftButtonDown;
+            }
         }
 
         public void PathGeometry()
@@ -197,6 +181,120 @@ namespace WPFLoginTest
             colors.Add((Color)ColorConverter.ConvertFromString("#E45419"));
             colors.Add((Color)ColorConverter.ConvertFromString("#DE2626"));
             return colors.ElementAt(rnd.Next(0, 8));
+        }
+
+        public void ManageUserButtonClicked(object sender, RoutedEventArgs e)
+        {
+            ChangeModeTo(ProfileMode.RemoveUser); //DEN DÄRA VARA EDIT
+        }
+        public void BackButtonClicked(object sender, RoutedEventArgs e)
+        {
+            ChangeModeTo(ProfileMode.SelectUser);
+        }
+
+        public bool ChangeModeTo(ProfileMode newMode)
+        {
+            if (mode == ProfileMode.SelectUser && newMode == ProfileMode.SelectUser)
+                return false;
+
+            return (mode, newMode) switch
+            {
+                (ProfileMode.SelectUser, ProfileMode.RemoveUser) => ChooseRemoveMode(),
+                (ProfileMode.RemoveUser, ProfileMode.AddUser) => ChooseAddMode(),
+                (ProfileMode.AddUser, ProfileMode.RemoveUser) => ChooseRemoveMode(),
+                (ProfileMode.RemoveUser, ProfileMode.EditUserName) => ChooseEditUserName(),
+                (ProfileMode.EditUserName, ProfileMode.RemoveUser) => ChooseRemoveMode(),
+                (_, ProfileMode.SelectUser) => ChooseSelectMode(),
+                _ => false
+            };
+
+            bool ChooseSelectMode()
+            {
+                HideBackButton();
+                HideAddUserBorder();
+                HideRemoveInterface();
+                HideEditUserNameInterface();
+                HideAddInterface();
+                mode = ProfileMode.SelectUser;
+                return true;
+            }
+
+            bool ChooseAddMode()
+            {
+                ShowBackButton();
+                HideRemoveInterface();
+                DeactivateAddUserBorder();
+                ShowAddInterface();
+                HideEditUserNameInterface();
+                mode = ProfileMode.AddUser;
+                return true;
+            }
+
+            bool ChooseRemoveMode()
+            {
+                ShowBackButton();
+                ShowRemoveInterface();
+                ShowAddUserBorder();
+                HideAddInterface();
+                HideEditUserNameInterface();
+                mode = ProfileMode.RemoveUser;
+                return true;
+            }
+
+            bool ChooseEditUserName()
+            {
+                ShowBackButton();
+                HideRemoveInterface();
+                DeactivateAddUserBorder();
+                ShowEditUserNameInterface();
+                mode = ProfileMode.EditUserName;
+                return true;
+            }
+
+            void HideBackButton()
+            {
+                BackButton.Visibility = Visibility.Hidden;
+            }
+            void HideAddUserBorder()
+            {
+                plusBorder.Visibility = Visibility.Hidden;
+            }
+            void HideRemoveInterface()
+            {
+
+            }
+            void HideEditUserNameInterface()
+            {
+
+            }
+            void HideAddInterface()
+            {
+
+            }
+            void DeactivateAddUserBorder()
+            {
+
+            }
+            void ShowAddInterface()
+            {
+
+            }
+            void ShowRemoveInterface()
+            {
+
+            }
+            void ShowAddUserBorder()
+            {
+                plusBorder.Visibility = Visibility.Visible;
+            }
+            void ShowEditUserNameInterface()
+            {
+
+            }
+            void ShowBackButton()
+            {
+                BackButton.Visibility = Visibility.Visible;
+            }
         }
     }
 }
