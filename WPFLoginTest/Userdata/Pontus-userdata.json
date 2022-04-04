@@ -1,0 +1,37 @@
+{
+  "name": "pontus",
+  "srsSchemas": [
+    {
+      "shortcutGuid": "hji654",
+      "currentSessionIndex": 2,
+      "currentSession": {
+        "repsDone": 2,
+        "acceptedRepCount": 2,
+        "goalRepCount": 5,
+        "beginning": "2019-09-07T-15:50+00",
+        "deadline": "2019-09-08T-15:50+00"
+      }
+    },
+    {
+      "shortcutGuid": "xyz321",
+      "currentSessionIndex": 3,
+      "currentSession": {
+        "repsDone": 1,
+        "acceptedRepCount": 2,
+        "goalRepCount": 5,
+        "beginning": "2019-09-01T-15:50+00",
+        "deadline": "2019-09-08T-15:50+00"
+      }
+    }
+  ],
+  "selectedProgramIds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "masteredShortcutGuids": [
+    "abc123",
+    "def456"
+  ]
+}
