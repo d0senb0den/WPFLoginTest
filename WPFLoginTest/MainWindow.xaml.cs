@@ -33,6 +33,7 @@ namespace WPFLoginTest
         private Random rnd = new();
         ProfileMode mode = ProfileMode.SelectUser;
         Border plusBorder = new();
+        System.Windows.Shapes.Path plusPath = new();
         List<UserCircle> userCircles = new List<UserCircle>();
 
         void LoadUserCircles()
@@ -57,23 +58,34 @@ namespace WPFLoginTest
             DrawUserCircles();
             InitializePlusBorder();
             EditBorder.MouseLeftButtonDown += (s, e) => OnEditButtonClicked();
-            EditBorder.MouseEnter += (s, e) => Border_MouseEnter(EditBorder, Brushes.White, new Thickness(2));
-            EditBorder.MouseLeave += (s, e) => Border_MouseLeave(EditBorder, Brushes.Gray, new Thickness(2));
+            EditBorder.MouseEnter += (s, e) => Button_MouseEnter(EditBorder, EditLabel);
+            EditBorder.MouseLeave += (s, e) => Button_MouseLeave(EditBorder, EditLabel);
+
+            BackButton.MouseLeftButtonDown += (s, e) => BackButtonClicked();
+            BackButton.MouseEnter += (s, e) => Button_MouseEnter(BackButton, BackButtonLabel);
+            BackButton.MouseLeave += (s, e) => Button_MouseLeave(BackButton, BackButtonLabel);
+
         }
+
+        private void Border_MouseEnter(object sender, MouseEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         public void InitializePlusBorder()
         {
             plusBorder.Width = 30;
             plusBorder.Height = 30;
             plusBorder.Background = Brushes.Transparent;
-            plusBorder.BorderBrush = Brushes.White;
+            plusBorder.BorderBrush = Brushes.Gray;
             plusBorder.BorderThickness = new Thickness(2);
             plusBorder.CornerRadius = new CornerRadius(5);
             plusBorder.Visibility = Visibility.Hidden;
 
-            System.Windows.Shapes.Path plusPath = new();
+            
             plusPath.Height = 13;
             plusPath.Width = 13;
-            plusPath.Stroke = Brushes.White;
+            plusPath.Stroke = Brushes.Gray;
             plusPath.HorizontalAlignment = HorizontalAlignment.Center;
             plusPath.VerticalAlignment = VerticalAlignment.Center;
             plusPath.StrokeStartLineCap = PenLineCap.Square;
@@ -106,8 +118,10 @@ namespace WPFLoginTest
 
             plusBorder.Child = plusPath;
 
-            plusBorder.MouseEnter += (sender, e) => Border_MouseEnter(plusBorder, Brushes.White, new Thickness(3));
-            plusBorder.MouseLeave += (sender, e) => Border_MouseLeave(plusBorder, Brushes.White, new Thickness(2));
+            plusBorder.MouseEnter += (sender, e) => Border_MouseEnter(plusBorder, Brushes.White, new Thickness(2));
+            plusBorder.MouseLeave += (sender, e) => Border_MouseLeave(plusBorder, Brushes.Gray, new Thickness(2));
+            plusBorder.MouseEnter += (sender, e) => PlusBorder_MouseEnter(plusPath);
+            plusBorder.MouseLeave += (sender, e) => PlusBorder_MouseLeave(plusPath);
 
             int i = Profiles.Children.Count;
             AddBorderToProfilesGrid(plusBorder, i);
@@ -164,11 +178,34 @@ namespace WPFLoginTest
             border.BorderBrush = borderBrush;
             border.BorderThickness = borderThickness;
         }
+        private void Button_MouseEnter(Border border, Label label)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+            border.BorderBrush = Brushes.White;
+            label.Foreground = Brushes.White;
+        }
+
+        private void PlusBorder_MouseEnter(System.Windows.Shapes.Path plusPath)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+            plusPath.Stroke = Brushes.White;
+        }
+        private void Button_MouseLeave(Border border, Label label)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+            border.BorderBrush = Brushes.Gray;
+            label.Foreground = Brushes.Gray;
+        }
         private void Border_MouseLeave(Border border, Brush borderBrush = null, Thickness borderThickness = default)
         {
             Mouse.OverrideCursor = Cursors.Arrow;
             border.BorderBrush = borderBrush;
             border.BorderThickness = borderThickness;
+        }
+        private void PlusBorder_MouseLeave(System.Windows.Shapes.Path plusPath)
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
+            plusPath.Stroke = Brushes.Gray;
         }
 
         private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -201,7 +238,7 @@ namespace WPFLoginTest
         {
             ChangeModeTo(ProfileMode.DeleteUser); //DEN DÄRA VARA EDIT
         }
-        public void BackButtonClicked(object sender, RoutedEventArgs e)
+        public void BackButtonClicked()
         {
             ChangeModeTo(ProfileMode.SelectUser);
         }

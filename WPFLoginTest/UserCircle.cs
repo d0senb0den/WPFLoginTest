@@ -55,8 +55,8 @@ namespace WPFLoginTest
             userNameLabel.HorizontalAlignment = HorizontalAlignment.Center;
             userNameLabel.SizeChanged += (s, e) =>
             {
-                    Canvas.SetTop(userNameLabel, (_canvas.Height - userNameLabel.RenderSize.Height) / 2);
-                    Canvas.SetLeft(userNameLabel, (_canvas.Width - userNameLabel.RenderSize.Width) / 2);
+                Canvas.SetTop(userNameLabel, (_canvas.Height - userNameLabel.RenderSize.Height) / 2);
+                Canvas.SetLeft(userNameLabel, (_canvas.Width - userNameLabel.RenderSize.Width) / 2);
             };
 
             border.VerticalAlignment = VerticalAlignment.Center;
@@ -79,11 +79,11 @@ namespace WPFLoginTest
             deleteBorder.CornerRadius = new CornerRadius(50);
             deleteBorder.Background = new SolidColorBrush(Colors.Red);
             deleteBorder.BorderBrush = Brushes.Black;
-            deleteBorder.BorderThickness = new Thickness(0.5);
+            deleteBorder.BorderThickness = new Thickness(1);
             deleteBorder.Child = xLabel;
             _canvas.Children.Add(deleteBorder);
-            Canvas.SetTop(deleteBorder, 10);
-            Canvas.SetRight(deleteBorder, 10);
+            Canvas.SetTop(deleteBorder, 0);
+            Canvas.SetRight(deleteBorder, 0);
             deleteBorder.Focusable = true;
 
             
