@@ -6,11 +6,29 @@
         xmlns:local="clr-namespace:WPFLoginTest"
         mc:Ignorable="d"
         Background="#2b2b2b"
+        
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel x:Name="Profiles" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        </StackPanel>
-        <Button Click="ManageUserButtonClicked" x:Name="ManageUsersButton" Content="Edit" Width="50" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10"/>
+        <Label Content="Who's honing their skills?" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="50"></Label>
+        <Grid x:Name="Profiles" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="120"></RowDefinition>
+                <RowDefinition Height="120"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <!--<Button Click="ManageUserButtonClicked" x:Name="ManageUsersButton" FontFamily="Arial" Content="Edit" Width="50" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="50"/>-->
+        <Border x:Name="EditBorder" BorderBrush="Gray" BorderThickness="2,2,2,2" CornerRadius="5" Width="60" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="50">
+            <Border.Child>
+                <Label Content="Edit" Foreground="Gray" HorizontalAlignment="Center"></Label>
+            </Border.Child>
+        </Border>
+        
         <Button Visibility="Hidden" Click="BackButtonClicked" x:Name="BackButton" Content="Back" Width="50" Height="25" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

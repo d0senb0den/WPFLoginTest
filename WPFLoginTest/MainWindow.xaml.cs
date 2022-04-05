@@ -24,7 +24,7 @@ namespace WPFLoginTest
     public enum ProfileMode
     {
         SelectUser,
-        RemoveUser,
+        DeleteUser,
         AddUser,
         EditUserName
     }
@@ -52,9 +52,13 @@ namespace WPFLoginTest
         public MainWindow()
         {
             InitializeComponent();
+            this.Background = new ImageBrush(new BitmapImage(new Uri($"{AppContext.BaseDirectory}Images\\MysticalKeyboard.png")));
             LoadUserCircles();
             DrawUserCircles();
             InitializePlusBorder();
+            EditBorder.MouseLeftButtonDown += (s, e) => OnEditButtonClicked();
+            EditBorder.MouseEnter += (s, e) => Border_MouseEnter(EditBorder, Brushes.White, new Thickness(2));
+            EditBorder.MouseLeave += (s, e) => Border_MouseLeave(EditBorder, Brushes.Gray, new Thickness(2));
         }
         public void InitializePlusBorder()
         {
@@ -64,7 +68,6 @@ namespace WPFLoginTest
             plusBorder.BorderBrush = Brushes.White;
             plusBorder.BorderThickness = new Thickness(2);
             plusBorder.CornerRadius = new CornerRadius(5);
-            Profiles.Children.Add(plusBorder);
             plusBorder.Visibility = Visibility.Hidden;
 
             System.Windows.Shapes.Path plusPath = new();
@@ -103,21 +106,32 @@ namespace WPFLoginTest
 
             plusBorder.Child = plusPath;
 
-            plusBorder.MouseEnter += (sender, e) => Border_MouseEnter(plusBorder);
+            plusBorder.MouseEnter += (sender, e) => Border_MouseEnter(plusBorder, Brushes.White, new Thickness(3));
             plusBorder.MouseLeave += (sender, e) => Border_MouseLeave(plusBorder, Brushes.White, new Thickness(2));
+
+            int i = Profiles.Children.Count;
+            AddBorderToProfilesGrid(plusBorder, i);
         }
         public void DrawUserCircles()
         {
-            foreach (var user in userCircles)
+
+            for (int i = 0; i < userCircles.Count; i++)
             {
+                UserCircle? user = userCircles[i];
                 var border = user.Border;
+                AddBorderToProfilesGrid(border, i);
 
-                Profiles.Children.Add(border);
-
-                border.MouseEnter += (sender, e) => Border_MouseEnter(border);
+                border.MouseEnter += (sender, e) => Border_MouseEnter(border, Brushes.White, new Thickness(3));
                 border.MouseLeave += (sender, e) => Border_MouseLeave(border);
                 border.MouseLeftButtonDown += Border_MouseLeftButtonDown;
             }
+        }
+
+        private void AddBorderToProfilesGrid(Border border, int i)
+        {
+            Grid.SetColumn(border, i % 4);
+            Grid.SetRow(border, (i < 4 ? 0 : 1));
+            Profiles.Children.Add(border);
         }
 
         public void PathGeometry()
@@ -144,11 +158,11 @@ namespace WPFLoginTest
             return fileArray.Select(f => System.IO.Path.GetFileName(f).Replace("-userdata.json", "")).ToArray();
         }
 
-        private void Border_MouseEnter(Border border)
+        private void Border_MouseEnter(Border border, Brush borderBrush, Thickness borderThickness)
         {
             Mouse.OverrideCursor = Cursors.Hand;
-            border.BorderBrush = Brushes.White;
-            border.BorderThickness = new Thickness(3);
+            border.BorderBrush = borderBrush;
+            border.BorderThickness = borderThickness;
         }
         private void Border_MouseLeave(Border border, Brush borderBrush = null, Thickness borderThickness = default)
         {
@@ -183,9 +197,9 @@ namespace WPFLoginTest
             return colors.ElementAt(rnd.Next(0, 8));
         }
 
-        public void ManageUserButtonClicked(object sender, RoutedEventArgs e)
+        public void OnEditButtonClicked()
         {
-            ChangeModeTo(ProfileMode.RemoveUser); //DEN DÄRA VARA EDIT
+            ChangeModeTo(ProfileMode.DeleteUser); //DEN DÄRA VARA EDIT
         }
         public void BackButtonClicked(object sender, RoutedEventArgs e)
         {
@@ -199,11 +213,11 @@ namespace WPFLoginTest
 
             return (mode, newMode) switch
             {
-                (ProfileMode.SelectUser, ProfileMode.RemoveUser) => ChooseRemoveMode(),
-                (ProfileMode.RemoveUser, ProfileMode.AddUser) => ChooseAddMode(),
-                (ProfileMode.AddUser, ProfileMode.RemoveUser) => ChooseRemoveMode(),
-                (ProfileMode.RemoveUser, ProfileMode.EditUserName) => ChooseEditUserName(),
-                (ProfileMode.EditUserName, ProfileMode.RemoveUser) => ChooseRemoveMode(),
+                (ProfileMode.SelectUser, ProfileMode.DeleteUser) => ChooseDeleteMode(),
+                (ProfileMode.DeleteUser, ProfileMode.AddUser) => ChooseAddMode(),
+                (ProfileMode.AddUser, ProfileMode.DeleteUser) => ChooseDeleteMode(),
+                (ProfileMode.DeleteUser, ProfileMode.EditUserName) => ChooseEditUserName(),
+                (ProfileMode.EditUserName, ProfileMode.DeleteUser) => ChooseDeleteMode(),
                 (_, ProfileMode.SelectUser) => ChooseSelectMode(),
                 _ => false
             };
@@ -212,7 +226,7 @@ namespace WPFLoginTest
             {
                 HideBackButton();
                 HideAddUserBorder();
-                HideRemoveInterface();
+                HideDeleteInterface();
                 HideEditUserNameInterface();
                 HideAddInterface();
                 mode = ProfileMode.SelectUser;
@@ -222,7 +236,7 @@ namespace WPFLoginTest
             bool ChooseAddMode()
             {
                 ShowBackButton();
-                HideRemoveInterface();
+                HideDeleteInterface();
                 DeactivateAddUserBorder();
                 ShowAddInterface();
                 HideEditUserNameInterface();
@@ -230,21 +244,21 @@ namespace WPFLoginTest
                 return true;
             }
 
-            bool ChooseRemoveMode()
+            bool ChooseDeleteMode()
             {
                 ShowBackButton();
-                ShowRemoveInterface();
+                ShowDeleteInterface();
                 ShowAddUserBorder();
                 HideAddInterface();
                 HideEditUserNameInterface();
-                mode = ProfileMode.RemoveUser;
+                mode = ProfileMode.DeleteUser;
                 return true;
             }
 
             bool ChooseEditUserName()
             {
                 ShowBackButton();
-                HideRemoveInterface();
+                HideDeleteInterface();
                 DeactivateAddUserBorder();
                 ShowEditUserNameInterface();
                 mode = ProfileMode.EditUserName;
@@ -259,9 +273,12 @@ namespace WPFLoginTest
             {
                 plusBorder.Visibility = Visibility.Hidden;
             }
-            void HideRemoveInterface()
+            void HideDeleteInterface()
             {
-
+                foreach (var userCircle in userCircles)
+                {
+                    userCircle.DeleteBorder.Visibility = Visibility.Hidden;
+                }
             }
             void HideEditUserNameInterface()
             {
@@ -279,9 +296,12 @@ namespace WPFLoginTest
             {
 
             }
-            void ShowRemoveInterface()
+            void ShowDeleteInterface()
             {
-
+                foreach (var userCircle in userCircles)
+                {
+                    userCircle.DeleteBorder.Visibility = Visibility.Visible;
+                }
             }
             void ShowAddUserBorder()
             {

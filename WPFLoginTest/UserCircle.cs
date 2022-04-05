@@ -35,51 +35,61 @@ namespace WPFLoginTest
         }
         private Border GetBorder()
         {
-            Label label = new();
-            label.Content = Name;
+            Label userNameLabel = new();
+            userNameLabel.Content = Name;
             Border border = new();
             border.Height = 100;
             border.Width = 100;
             border.Margin = new Thickness(10);
             border.CornerRadius = new CornerRadius(50);
             border.Background = new SolidColorBrush(Background);
-            VisualBrush brush = new();
-            brush.Visual = border;
+            //VisualBrush brush = new();
+            //brush.Visual = border;
             _canvas.Height = border.Height;
             _canvas.Width = border.Width;
-            _canvas.Background = Brushes.Green;
+            //_canvas.Background = Brushes.Green;
             border.Child = _canvas;
-            _canvas.Children.Add(label);
-            label.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            label.VerticalAlignment = VerticalAlignment.Center;
-            label.HorizontalAlignment = HorizontalAlignment.Center;
-            Canvas.SetTop(label, (_canvas.Height - label.Height) / 2);
-            Canvas.SetLeft(label, (_canvas.Width - label.Width) / 2);
+            _canvas.Children.Add(userNameLabel);
+            userNameLabel.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            userNameLabel.VerticalAlignment = VerticalAlignment.Center;
+            userNameLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            userNameLabel.SizeChanged += (s, e) =>
+            {
+                    Canvas.SetTop(userNameLabel, (_canvas.Height - userNameLabel.RenderSize.Height) / 2);
+                    Canvas.SetLeft(userNameLabel, (_canvas.Width - userNameLabel.RenderSize.Width) / 2);
+            };
 
+            border.VerticalAlignment = VerticalAlignment.Center;
+            border.HorizontalAlignment = HorizontalAlignment.Center;
             return border;
         }
         private Border GetDeleteBorder()
         {
-            Label label = new();
-            label.Content = "x";
-            Border border = new();
-            border.Height = 20;
-            border.Width = 20;
-            border.CornerRadius = new CornerRadius(50);
-            border.Background = new SolidColorBrush(Colors.Red);
-            border.BorderBrush = Brushes.White;
-            border.BorderThickness = new Thickness(1);
-            VisualBrush brush = new();
-            brush.Visual = border;
-            border.Child = label;
-            _canvas.Children.Add(border);
-            label.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            label.VerticalAlignment = VerticalAlignment.Center;
-            label.HorizontalAlignment = HorizontalAlignment.Center;
-            Canvas.SetTop(border, 0);
-            Canvas.SetRight(border, 0);
+            Label xLabel = new();
+            xLabel.Content = "X";
+            xLabel.FontWeight = FontWeights.Bold;
+            xLabel.FontSize = 12;
+            xLabel.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            xLabel.VerticalAlignment = VerticalAlignment.Center;
+            xLabel.HorizontalAlignment = HorizontalAlignment.Center;
 
-            return border;
+            Border deleteBorder = new();
+            deleteBorder.Height = 30;
+            deleteBorder.Width = 30;
+            deleteBorder.CornerRadius = new CornerRadius(50);
+            deleteBorder.Background = new SolidColorBrush(Colors.Red);
+            deleteBorder.BorderBrush = Brushes.Black;
+            deleteBorder.BorderThickness = new Thickness(0.5);
+            deleteBorder.Child = xLabel;
+            _canvas.Children.Add(deleteBorder);
+            Canvas.SetTop(deleteBorder, 10);
+            Canvas.SetRight(deleteBorder, 10);
+            deleteBorder.Focusable = true;
+
+            
+
+            deleteBorder.Visibility = Visibility.Hidden;
+            return deleteBorder;
         }
     }
 }
